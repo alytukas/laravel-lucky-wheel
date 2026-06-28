@@ -15,13 +15,18 @@ class LuckyWheelController extends Controller
             'fingerprint' => 'nullable|string|max:255',
         ]);
 
+        $email = $validated['email'] ?? null;
+        if (empty($email) && auth()->check() && isset(auth()->user()->email)) {
+            $email = auth()->user()->email;
+        }
+
         $service = app('lucky-wheel');
 
         $result = $service->spin(
             auth()->id(),
             $request->ip(),
             $validated['fingerprint'] ?? null,
-            $validated['email'] ?? null
+            $email
         );
 
         $response = response()->json($result, $result['success'] ? 200 : 422);

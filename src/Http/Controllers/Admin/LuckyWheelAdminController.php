@@ -28,6 +28,7 @@ class LuckyWheelAdminController extends Controller
             'theme' => 'required|string|in:default,christmas,summer',
             'email_policy' => 'required|string|in:none,before_spin,after_win',
             'cooldown_hours' => 'required|integer|min:0',
+            'auto_open_seconds' => 'required|integer|min:0',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date|after_or_equal:starts_at',
         ]);

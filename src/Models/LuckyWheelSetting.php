@@ -13,6 +13,7 @@ class LuckyWheelSetting extends Model
     protected $casts = [
         'is_enabled' => 'boolean',
         'cooldown_hours' => 'integer',
+        'auto_open_seconds' => 'integer',
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
     ];
@@ -26,6 +27,7 @@ class LuckyWheelSetting extends Model
                 'theme' => 'default',
                 'email_policy' => 'none',
                 'cooldown_hours' => 24,
+                'auto_open_seconds' => 5,
             ]
         );
     }

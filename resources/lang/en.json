@@ -90,5 +90,7 @@
     "Pridėti prizą": "Add Prize",
     "Lucky wheel settings successfully updated!": "Lucky wheel settings successfully updated!",
     "Prize successfully added!": "Prize successfully added!",
-    "Prize successfully removed!": "Prize successfully removed!"
+    "Prize successfully removed!": "Prize successfully removed!",
+    "Automatinis atidarymas (sekundėmis)": "Auto-open modal (seconds)",
+    "0 reiškia, kad neatidaroma automatiškai": "0 means disabled (will not open automatically)"
 }

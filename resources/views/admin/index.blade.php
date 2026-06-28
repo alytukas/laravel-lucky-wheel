@@ -47,6 +47,12 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="auto_open_seconds" class="form-label">{{ __('Automatinis atidarymas (sekundėmis)') }}</label>
+                        <input type="number" name="auto_open_seconds" id="auto_open_seconds" class="form-control" value="{{ $settings->auto_open_seconds ?? 5 }}" min="0">
+                        <small class="text-muted">{{ __('0 reiškia, kad neatidaroma automatiškai') }}</small>
+                    </div>
+
+                    <div class="mb-3">
                         <label for="starts_at" class="form-label">{{ __('Rodyti nuo (neprivaloma)') }}</label>
                         <input type="datetime-local" name="starts_at" id="starts_at" class="form-control" value="{{ $settings->starts_at ? $settings->starts_at->format('Y-m-d\TH:i') : '' }}">
                     </div>

@@ -16,11 +16,11 @@
             
             <div class="lw-wheel-container">
                 <div class="lw-pointer">▼</div>
-                <canvas id="lw-canvas" width="340" height="340"></canvas>
+                <canvas id="lw-canvas"></canvas>
             </div>
 
             <div class="lw-form-container">
-                @if($settings->email_policy === 'before_spin')
+                @if($settings->email_policy === 'before_spin' && !auth()->check())
                     <div id="lw-email-step">
                         <input type="email" id="lw-input-email" class="lw-input" placeholder="{{ __('Enter your email address...') }}" required>
                     </div>
@@ -51,67 +51,75 @@
 </div>
 
 <style>
-.lw-theme-default { font-family: 'Inter', system-ui, sans-serif; }
+.lw-theme-default { font-family: 'Inter', system-ui, -apple-system, sans-serif; box-sizing: border-box; }
+.lw-theme-default *, .lw-theme-default *::before, .lw-theme-default *::after { box-sizing: inherit; }
+
 .lw-floating-btn {
-    position: fixed; bottom: 25px; left: 25px; z-index: 9998;
+    position: fixed; bottom: 20px; left: 20px; z-index: 9998;
     background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #e2e8f0;
-    color: #fff; padding: 12px 20px; border-radius: 50px; cursor: pointer;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px;
+    color: #fff; padding: 10px 18px; border-radius: 50px; cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px;
     transition: transform 0.3s, box-shadow 0.3s;
 }
 .lw-floating-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
 .lw-btn-icon { font-size: 20px; animation: bounce 2s infinite; }
-.lw-btn-text { font-weight: 600; font-size: 15px; }
+.lw-btn-text { font-weight: 600; font-size: 14px; }
 
 .lw-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;
-    background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center; padding: 20px;
+    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center; padding: 15px;
 }
 .lw-modal-content {
     background: #1e293b; border: 1px solid #334155; border-radius: 20px;
-    width: 100%; max-width: 440px; padding: 30px; position: relative;
+    width: 100%; max-width: 420px; padding: 25px 20px; position: relative;
     box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; color: #f8fafc;
+    max-height: 92vh; overflow-y: auto;
 }
 .lw-close-btn {
-    position: absolute; top: 15px; right: 20px; background: none; border: none;
-    color: #94a3b8; font-size: 28px; cursor: pointer; transition: color 0.2s;
+    position: absolute; top: 12px; right: 15px; background: none; border: none;
+    color: #94a3b8; font-size: 26px; cursor: pointer; transition: color 0.2s;
+    line-height: 1; padding: 4px; z-index: 20;
 }
 .lw-close-btn:hover { color: #f8fafc; }
-.lw-title { margin: 0 0 8px 0; font-size: 24px; font-weight: 700; color: #f1f5f9; }
-.lw-subtitle { margin: 0 0 20px 0; font-size: 14px; color: #94a3b8; }
+.lw-title { margin: 0 0 6px 0; font-size: 22px; font-weight: 700; color: #f1f5f9; padding-right: 25px; }
+.lw-subtitle { margin: 0 0 16px 0; font-size: 13px; color: #94a3b8; line-height: 1.4; }
 
-.lw-wheel-container { position: relative; margin: 0 auto 25px auto; width: 340px; height: 340px; }
+.lw-wheel-container {
+    position: relative; margin: 0 auto 20px auto;
+    width: 100%; max-width: 310px; aspect-ratio: 1 / 1;
+}
 .lw-pointer {
     position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
     font-size: 28px; color: #ef4444; z-index: 10; text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
-#lw-canvas { width: 100%; height: 100%; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
+#lw-canvas { width: 100%; height: 100%; display: block; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
 
 .lw-input {
-    width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #475569;
-    background: #0f172a; color: #fff; font-size: 14px; margin-bottom: 12px;
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 1px solid #475569;
+    background: #0f172a; color: #fff; font-size: 14px; margin-bottom: 12px; outline: none;
 }
+.lw-input:focus { border-color: #38bdf8; }
 .lw-spin-btn {
     width: 100%; padding: 14px; background: linear-gradient(135deg, #3b82f6, #2563eb);
-    border: none; border-radius: 10px; color: #fff; font-size: 16px; font-weight: 600;
+    border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: 600;
     cursor: pointer; transition: filter 0.2s;
 }
 .lw-spin-btn:hover { filter: brightness(1.1); }
 .lw-spin-btn:disabled { background: #64748b; cursor: not-allowed; }
 
 .lw-error { color: #f87171; font-size: 13px; margin-top: 10px; }
-.lw-result-container, .lw-claim-container { margin-top: 20px; padding-top: 20px; border-top: 1px solid #334155; }
-.lw-result-title { font-size: 20px; color: #38bdf8; margin: 0 0 8px 0; }
-.lw-result-desc { font-size: 15px; color: #e2e8f0; margin: 0 0 15px 0; }
+.lw-result-container, .lw-claim-container { margin-top: 18px; padding-top: 18px; border-top: 1px solid #334155; }
+.lw-result-title { font-size: 19px; color: #38bdf8; margin: 0 0 6px 0; font-weight: 700; }
+.lw-result-desc { font-size: 14px; color: #e2e8f0; margin: 0 0 14px 0; line-height: 1.4; }
 .lw-code-box {
-    background: #0f172a; border: 1px dashed #38bdf8; padding: 10px 15px;
-    border-radius: 8px; display: flex; align-items: center; justify-content: space-between;
+    background: #0f172a; border: 1px dashed #38bdf8; padding: 10px 14px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
 }
-.lw-code-text { font-family: monospace; font-size: 16px; font-weight: 700; color: #38bdf8; }
+.lw-code-text { font-family: monospace; font-size: 15px; font-weight: 700; color: #38bdf8; word-break: break-all; }
 .lw-copy-btn {
     background: #38bdf8; color: #0f172a; border: none; padding: 6px 12px;
-    border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px;
+    border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; flex-shrink: 0;
 }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
 </style>
@@ -121,29 +129,39 @@
     const prizes = @json($prizes);
     const numSectors = prizes.length;
     const arc = (2 * Math.PI) / (numSectors || 1);
+    const autoOpenSeconds = {{ (int) ($settings->auto_open_seconds ?? 0) }};
     let canvas, ctx;
     let currentRotation = 0;
     let activeSpinId = null;
 
     window.openLuckyWheelModal = function() {
         document.getElementById('lw-modal-overlay').style.display = 'flex';
+        sessionStorage.setItem('lw_seen', '1');
         initWheel();
     };
 
     window.closeLuckyWheelModal = function() {
         document.getElementById('lw-modal-overlay').style.display = 'none';
+        sessionStorage.setItem('lw_seen', '1');
     };
 
     function initWheel() {
         canvas = document.getElementById('lw-canvas');
         if (!canvas || !canvas.getContext) return;
         ctx = canvas.getContext('2d');
+        
+        const size = 340;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        ctx.scale(dpr, dpr);
+        
         drawWheel();
     }
 
     function drawWheel() {
-        ctx.clearRect(0, 0, 340, 340);
         const centerX = 170, centerY = 170, radius = 160;
+        ctx.clearRect(0, 0, 340, 340);
 
         prizes.forEach((prize, i) => {
             const angle = i * arc - Math.PI / 2;
@@ -155,16 +173,26 @@
             ctx.fill();
             ctx.save();
 
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle + arc / 2);
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 13px system-ui, -apple-system, sans-serif';
             ctx.fillStyle = prize.text_color || '#ffffff';
-            ctx.font = 'bold 13px sans-serif';
-            ctx.translate(
-                centerX + Math.cos(angle + arc / 2) * (radius - 50),
-                centerY + Math.sin(angle + arc / 2) * (radius - 50)
-            );
-            ctx.rotate(angle + arc / 2 + Math.PI / 2);
-            ctx.fillText(prize.title.substring(0, 16), -ctx.measureText(prize.title.substring(0, 16)).width / 2, 0);
+            
+            let title = prize.title || '';
+            if (title.length > 20) title = title.substring(0, 18) + '...';
+            ctx.fillText(title, radius - 18, 0);
             ctx.restore();
         });
+    }
+
+    if (autoOpenSeconds > 0 && !sessionStorage.getItem('lw_seen')) {
+        setTimeout(() => {
+            if (document.getElementById('lw-modal-overlay').style.display !== 'flex') {
+                openLuckyWheelModal();
+            }
+        }, autoOpenSeconds * 1000);
     }
 
     window.spinLuckyWheel = async function() {

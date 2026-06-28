@@ -16,11 +16,11 @@
             
             <div class="lw-wheel-container">
                 <div class="lw-pointer">🔥</div>
-                <canvas id="lw-canvas" width="340" height="340"></canvas>
+                <canvas id="lw-canvas"></canvas>
             </div>
 
             <div class="lw-form-container">
-                @if($settings->email_policy === 'before_spin')
+                @if($settings->email_policy === 'before_spin' && !auth()->check())
                     <div id="lw-email-step">
                         <input type="email" id="lw-input-email" class="lw-input" placeholder="{{ __('Your email for the discount...') }}" required>
                     </div>
@@ -51,62 +51,68 @@
 </div>
 
 <style>
-.lw-theme-summer { font-family: 'Outfit', system-ui, sans-serif; }
+.lw-theme-summer { font-family: 'Outfit', system-ui, -apple-system, sans-serif; box-sizing: border-box; }
+.lw-theme-summer *, .lw-theme-summer *::before, .lw-theme-summer *::after { box-sizing: inherit; }
+
 .lw-floating-btn-summer {
-    position: fixed; bottom: 25px; left: 25px; z-index: 9998;
+    position: fixed; bottom: 20px; left: 20px; z-index: 9998;
     background: linear-gradient(135deg, #f97316, #e11d48); border: 2px solid #fef08a;
-    color: #fff; padding: 12px 20px; border-radius: 50px; cursor: pointer;
-    box-shadow: 0 10px 25px rgba(249,115,22,0.4); display: flex; align-items: center; gap: 10px;
+    color: #fff; padding: 10px 18px; border-radius: 50px; cursor: pointer;
+    box-shadow: 0 10px 25px rgba(249,115,22,0.4); display: flex; align-items: center; gap: 8px;
     transition: transform 0.3s;
 }
 .lw-floating-btn-summer:hover { transform: translateY(-3px) scale(1.05); }
-.lw-btn-icon { font-size: 22px; animation: pulse 1.5s infinite; }
-.lw-btn-text { font-weight: 700; font-size: 15px; color: #fff; }
+.lw-btn-icon { font-size: 20px; animation: pulse 1.5s infinite; }
+.lw-btn-text { font-weight: 700; font-size: 14px; color: #fff; }
 
 .lw-modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;
     background: rgba(12, 10, 9, 0.85); backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center; padding: 20px;
+    display: flex; align-items: center; justify-content: center; padding: 15px;
 }
 .lw-modal-content-summer {
-    background: linear-gradient(145deg, #fff7ed, #ffedd5); border: 3px solid #fb923c; border-radius: 28px;
-    width: 100%; max-width: 440px; padding: 30px; position: relative;
+    background: linear-gradient(145deg, #fff7ed, #ffedd5); border: 3px solid #fb923c; border-radius: 24px;
+    width: 100%; max-width: 420px; padding: 25px 20px; position: relative;
     box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; color: #431407;
+    max-height: 92vh; overflow-y: auto;
 }
 .lw-close-btn {
-    position: absolute; top: 15px; right: 20px; background: none; border: none;
-    color: #9a3412; font-size: 28px; cursor: pointer;
+    position: absolute; top: 12px; right: 15px; background: none; border: none;
+    color: #9a3412; font-size: 26px; cursor: pointer; line-height: 1; padding: 4px; z-index: 20;
 }
-.lw-title { margin: 0 0 8px 0; font-size: 24px; font-weight: 800; color: #ea580c; }
-.lw-subtitle { margin: 0 0 20px 0; font-size: 14px; color: #9a3412; }
+.lw-title { margin: 0 0 6px 0; font-size: 22px; font-weight: 800; color: #ea580c; padding-right: 25px; }
+.lw-subtitle { margin: 0 0 16px 0; font-size: 13px; color: #9a3412; line-height: 1.4; }
 
-.lw-wheel-container { position: relative; margin: 0 auto 25px auto; width: 340px; height: 340px; }
+.lw-wheel-container {
+    position: relative; margin: 0 auto 20px auto;
+    width: 100%; max-width: 310px; aspect-ratio: 1 / 1;
+}
 .lw-pointer {
     position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-    font-size: 32px; color: #ea580c; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    font-size: 30px; color: #ea580c; z-index: 10; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
-#lw-canvas { width: 100%; height: 100%; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
+#lw-canvas { width: 100%; height: 100%; display: block; transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99); }
 
 .lw-input {
-    width: 100%; padding: 12px 16px; border-radius: 12px; border: 2px solid #fdba74;
-    background: #ffffff; color: #431407; font-size: 14px; margin-bottom: 12px;
+    width: 100%; padding: 12px 14px; border-radius: 10px; border: 2px solid #fdba74;
+    background: #ffffff; color: #431407; font-size: 14px; margin-bottom: 12px; outline: none;
 }
 .lw-spin-btn-summer {
     width: 100%; padding: 14px; background: linear-gradient(135deg, #f97316, #ea580c);
-    border: none; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 700;
+    border: none; border-radius: 10px; color: #fff; font-size: 15px; font-weight: 700;
     cursor: pointer; box-shadow: 0 4px 12px rgba(234,88,12,0.4);
 }
 .lw-spin-btn-summer:hover { filter: brightness(1.1); }
 .lw-error { color: #dc2626; font-size: 13px; margin-top: 10px; font-weight: 600; }
-.lw-result-container, .lw-claim-container { margin-top: 20px; padding-top: 20px; border-top: 2px dashed #fed7aa; }
-.lw-result-title { font-size: 22px; color: #ea580c; margin: 0 0 8px 0; font-weight: 800; }
-.lw-result-desc { font-size: 15px; color: #7c2d12; margin: 0 0 15px 0; }
+.lw-result-container, .lw-claim-container { margin-top: 18px; padding-top: 18px; border-top: 2px dashed #fed7aa; }
+.lw-result-title { font-size: 19px; color: #ea580c; margin: 0 0 6px 0; font-weight: 800; }
+.lw-result-desc { font-size: 14px; color: #7c2d12; margin: 0 0 14px 0; line-height: 1.4; }
 .lw-code-box {
-    background: #ffffff; border: 2px solid #fb923c; padding: 10px 15px;
-    border-radius: 12px; display: flex; align-items: center; justify-content: space-between;
+    background: #ffffff; border: 2px solid #fb923c; padding: 10px 14px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
 }
-.lw-code-text { font-family: monospace; font-size: 18px; font-weight: 800; color: #ea580c; }
-.lw-copy-btn { background: #ea580c; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+.lw-code-text { font-family: monospace; font-size: 15px; font-weight: 800; color: #ea580c; word-break: break-all; }
+.lw-copy-btn { background: #ea580c; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; flex-shrink: 0; font-size: 13px; }
 
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
 </style>
@@ -116,29 +122,39 @@
     const prizes = @json($prizes);
     const numSectors = prizes.length;
     const arc = (2 * Math.PI) / (numSectors || 1);
+    const autoOpenSeconds = {{ (int) ($settings->auto_open_seconds ?? 0) }};
     let canvas, ctx;
     let currentRotation = 0;
     let activeSpinId = null;
 
     window.openLuckyWheelModal = function() {
         document.getElementById('lw-modal-overlay').style.display = 'flex';
+        sessionStorage.setItem('lw_seen', '1');
         initWheel();
     };
 
     window.closeLuckyWheelModal = function() {
         document.getElementById('lw-modal-overlay').style.display = 'none';
+        sessionStorage.setItem('lw_seen', '1');
     };
 
     function initWheel() {
         canvas = document.getElementById('lw-canvas');
         if (!canvas || !canvas.getContext) return;
         ctx = canvas.getContext('2d');
+        
+        const size = 340;
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = size * dpr;
+        canvas.height = size * dpr;
+        ctx.scale(dpr, dpr);
+        
         drawWheel();
     }
 
     function drawWheel() {
-        ctx.clearRect(0, 0, 340, 340);
         const centerX = 170, centerY = 170, radius = 160;
+        ctx.clearRect(0, 0, 340, 340);
 
         prizes.forEach((prize, i) => {
             const angle = i * arc - Math.PI / 2;
@@ -150,16 +166,26 @@
             ctx.fill();
             ctx.save();
 
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle + arc / 2);
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'bold 13px system-ui, -apple-system, sans-serif';
             ctx.fillStyle = prize.text_color || '#431407';
-            ctx.font = 'bold 13px sans-serif';
-            ctx.translate(
-                centerX + Math.cos(angle + arc / 2) * (radius - 50),
-                centerY + Math.sin(angle + arc / 2) * (radius - 50)
-            );
-            ctx.rotate(angle + arc / 2 + Math.PI / 2);
-            ctx.fillText(prize.title.substring(0, 16), -ctx.measureText(prize.title.substring(0, 16)).width / 2, 0);
+            
+            let title = prize.title || '';
+            if (title.length > 20) title = title.substring(0, 18) + '...';
+            ctx.fillText(title, radius - 18, 0);
             ctx.restore();
         });
+    }
+
+    if (autoOpenSeconds > 0 && !sessionStorage.getItem('lw_seen')) {
+        setTimeout(() => {
+            if (document.getElementById('lw-modal-overlay').style.display !== 'flex') {
+                openLuckyWheelModal();
+            }
+        }, autoOpenSeconds * 1000);
     }
 
     window.spinLuckyWheel = async function() {
